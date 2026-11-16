@@ -23,3 +23,7 @@
 - Dashboard owns the combined wallet view; keep /carteira as a redirect so existing links remain valid.
 - Financial totals and chat financial replies derive from the same browser-persisted ledger, with same-window events and cross-tab storage listeners; demo financial figures must not be mixed with recorded transactions.
 - Dashboard indicator slides share the account and inventory records with their pages and use the financial ledger for wallet values, preventing divergent summaries.
+
+<!-- AGENT-MEMORY:BEGIN -->
+- Provision a missing barber queue using the authenticated user's RLS client with conflict-safe owner insertion; never claim another account's queue, so remixed and newly signed-in accounts can open their own panel safely.
+<!-- AGENT-MEMORY:END -->

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { donoDaFila } from "./fila-permissao";
+import { donoDaFila, novaBarbearia } from "./fila-permissao";
 
 export const painelFila = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -16,9 +16,18 @@ export const painelFila = createServerFn({ method: "POST" })
     const { setResponseHeader } = await import("@tanstack/react-start/server");
     setResponseHeader("Cache-Control", "no-store");
     const { supabase, userId } = context;
-    const { data: barb, error: bError } = await supabase.from("barbearias")
+    const consultarBarbearia = () => supabase.from("barbearias")
       .select("id,owner_id,slug,fila_aberta,minutos_por_cliente")
-      .eq("owner_id", userId).single();
+      .eq("owner_id", userId).maybeSingle();
+    let { data: barb, error: bError } = await consultarBarbearia();
+    if (bError) throw new Error("Não foi possível consultar a barbearia.");
+    if (!barb) {
+      // RLS enforces ownership; concurrent first visits keep the same queue.
+      const { error } = await supabase.from("barbearias")
+        .upsert(novaBarbearia(userId), { onConflict: "owner_id", ignoreDuplicates: true });
+      if (error) throw new Error("Não foi possível preparar a fila desta conta.");
+      ({ data: barb, error: bError } = await consultarBarbearia());
+    }
     if (bError || !barb || !donoDaFila(userId, barb.owner_id)) throw new Error("Esta conta não tem acesso à fila da barbearia.");
     if (data.acao === "status") {
       if (!data.id || !data.status) throw new Error("Atendimento inválido.");

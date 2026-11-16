@@ -1,5 +1,7 @@
 # Fila online
 
+- [x] Corrigir abertura da fila para contas sem barbearia vinculada e verificar login autenticado.
+
 - [x] Garantir identificação e progresso separados para cada cliente/dispositivo.
 - [x] Manter o cadastro público isolado da navegação e dos controles do barbeiro.
 - [x] Substituir o PIN pelo login persistente do dono da fila.
