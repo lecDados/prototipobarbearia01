@@ -23,6 +23,6 @@
 
 # Agendamento na fila
 
-- [ ] Adicionar escolha de horários disponíveis entre 9h e 20h na fila pública.
-- [ ] Salvar reservas sem conflitos e exibi-las em Agendamentos no painel do barbeiro.
-- [ ] Testar limites, privacidade e reserva completa.
+- [x] Adicionar caixinha opcional e escolha de horários disponíveis entre 9h e 20h na fila pública, preservando entrada apenas com nome e celular.
+- [x] Salvar reservas sem conflitos e exibi-las em Agendamentos no painel do barbeiro.
+- [x] Testar seleção, privacidade, reserva completa, restauração e cancelamento; restringir reservas futuras ao intervalo permitido.

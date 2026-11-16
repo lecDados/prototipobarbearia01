@@ -46,6 +46,7 @@ export type Database = {
       }
       fila: {
         Row: {
+          agendado_em: string | null
           barbearia_id: string
           criado_em: string
           id: string
@@ -55,6 +56,7 @@ export type Database = {
           whatsapp: string
         }
         Insert: {
+          agendado_em?: string | null
           barbearia_id: string
           criado_em?: string
           id?: string
@@ -64,6 +66,7 @@ export type Database = {
           whatsapp: string
         }
         Update: {
+          agendado_em?: string | null
           barbearia_id?: string
           criado_em?: string
           id?: string
@@ -91,11 +94,16 @@ export type Database = {
         Args: { _nome: string; _slug: string; _whatsapp: string }
         Returns: Json
       }
+      fila_agendamento_cliente: {
+        Args: { _id: string; _slug: string; _token: string }
+        Returns: Json
+      }
       fila_cliente: {
         Args: { _id: string; _slug: string; _token: string }
         Returns: boolean
       }
       fila_publica: { Args: { _slug: string }; Returns: Json }
+      horarios_fila: { Args: { _dia: string; _slug: string }; Returns: Json }
       minha_barbearia: {
         Args: never
         Returns: {
@@ -113,6 +121,15 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      reservar_fila: {
+        Args: {
+          _inicio: string
+          _nome: string
+          _slug: string
+          _whatsapp: string
+        }
+        Returns: Json
       }
       sair_fila: { Args: { _id: string; _token: string }; Returns: undefined }
     }

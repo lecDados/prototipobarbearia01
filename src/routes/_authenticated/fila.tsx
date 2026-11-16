@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/fila")({
 });
 
 type Barbearia = { id: string; slug: string; fila_aberta: boolean; minutos_por_cliente: number };
-type Cliente = { id: string; nome: string; whatsapp: string; status: string; criado_em: string };
+type Cliente = { id: string; nome: string; whatsapp: string; status: string; criado_em: string; agendado_em: string | null };
 
 function FilaPainel() {
   const consultar = useServerFn(painelFila);
@@ -66,7 +66,9 @@ function FilaPainel() {
   }
 
   const link = barb ? `${origem}/fila/${barb.slug}` : "";
-  const proximo = clientes.find((c) => c.status === "aguardando");
+  const fila = clientes.filter((c) => !c.agendado_em);
+  const reservas = clientes.filter((c) => c.agendado_em).sort((a, b) => (a.agendado_em ?? "").localeCompare(b.agendado_em ?? ""));
+  const proximo = fila.find((c) => c.status === "aguardando");
 
   return (
     <AppShell>
@@ -81,7 +83,7 @@ function FilaPainel() {
               <div className="grid gap-5 lg:grid-cols-3">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Na fila</p>
-                <p className="mt-1 text-4xl font-semibold">{clientes.length}</p>
+                <p className="mt-1 text-4xl font-semibold">{fila.length}</p>
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Fila</p>
@@ -127,11 +129,11 @@ function FilaPainel() {
             </div>
 
             <Panel eyebrow="Ordem de chegada" title="Clientes em espera" className="mt-5">
-              {clientes.length === 0 ? (
+              {fila.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">Ninguém na fila agora.</p>
               ) : (
                 <ol className="divide-y divide-border">
-                  {clientes.map((c, i) => {
+                  {fila.map((c, i) => {
                     const destaque = c.id === proximo?.id;
                     return (
                       <li key={c.id} className={`flex flex-wrap items-center gap-3 py-3.5 ${destaque ? "-mx-3 rounded-lg bg-primary/10 px-3" : ""}`}>
@@ -157,6 +159,24 @@ function FilaPainel() {
                       </li>
                     );
                   })}
+                </ol>
+              )}
+            </Panel>
+
+            <Panel eyebrow="Horários reservados" title="Agendamentos" className="mt-5">
+              {reservas.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">Nenhum horário reservado.</p> : (
+                <ol className="divide-y divide-border">
+                  {reservas.map((c) => (
+                    <li key={c.id} className="flex flex-wrap items-center gap-3 py-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold">{c.nome}</p>
+                        <p className="text-sm text-muted-foreground">{c.agendado_em && new Date(c.agendado_em).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · {c.whatsapp}</p>
+                        {c.status === "atendendo" && <p className="text-xs text-success">Em atendimento</p>}
+                      </div>
+                      {c.status === "aguardando" && <Button variant="outline" disabled={busy} onClick={() => status(c.id, "atendendo")}><Play size={14} /> Atender</Button>}
+                      <Button disabled={busy} onClick={() => status(c.id, "concluido")}><Check size={14} /> Concluir</Button>
+                    </li>
+                  ))}
                 </ol>
               )}
             </Panel>
