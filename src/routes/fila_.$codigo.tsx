@@ -209,7 +209,7 @@ function FilaPublica() {
           {agendar && (
             <div className="space-y-3 border-t border-border pt-3">
               <label htmlFor="dia-reserva" className="block text-sm font-semibold">Data</label>
-              <input id="dia-reserva" type="date" required min={diaSaoPaulo()} max={diaSaoPaulo(new Date(Date.now() + 30 * 86400000))} value={dia} onChange={(e) => setDia(e.target.value)} className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base" />
+              <input id="dia-reserva" type="date" required min={diaSaoPaulo()} max={diaSaoPaulo(new Date(Date.now() + 30 * 86400000))} value={dia} onChange={(e) => setDia(e.target.value)} className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base dark:scheme-dark" />
               <div className="flex justify-between text-xs text-muted-foreground"><span>9h às 20h</span><span>Ocupados indisponíveis</span></div>
               {carregandoHorarios && horarios.length === 0 ? <p className="text-sm text-muted-foreground">Consultando horários…</p> : (
                 <div className="grid grid-cols-4 gap-2" role="group" aria-label="Horários disponíveis">
