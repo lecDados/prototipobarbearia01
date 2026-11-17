@@ -19,6 +19,7 @@ import {
 import googleG from "@/assets/google-g.png.asset.json";
 import { BarberNews } from "@/components/BarberNews";
 import { IndicadoresCarousel } from "@/components/IndicadoresCarousel";
+import { FloatingShortcuts } from "@/components/FloatingShortcuts";
 import { useFinanceiro } from "@/hooks/use-financeiro";
 import { formatBRL } from "@/lib/financeiro";
 
@@ -156,7 +157,7 @@ export function AppShell({
         </div>
       </aside>
 
-      {showChat && <ChatWidget />}
+      {showChat && <><FloatingShortcuts /><ChatWidget /></>}
     </main>
   );
 }

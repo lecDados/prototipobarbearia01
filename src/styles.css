@@ -77,6 +77,8 @@
   --color-queue-action: var(--queue-action);
   --color-queue-action-hover: var(--queue-action-hover);
   --color-queue-action-foreground: var(--queue-action-foreground);
+  --color-floating-queue: var(--floating-queue);
+  --color-floating-queue-foreground: var(--floating-queue-foreground);
   --color-stat-blue: var(--stat-blue);
   --color-stat-blue-strong: var(--stat-blue-strong);
   --color-stat-blue-border: var(--stat-blue-border);
@@ -91,6 +93,8 @@
 }
 
 :root {
+  --floating-queue: oklch(1 0 0);
+  --floating-queue-foreground: oklch(0.22 0.032 289);
   --earnings-card: oklch(0.91 0.075 153);
   --income-card: oklch(0.9 0.065 225);
   --expenses-card: oklch(0.9 0.065 340);
