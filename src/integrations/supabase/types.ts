@@ -51,6 +51,7 @@ export type Database = {
           criado_em: string
           id: string
           nome: string
+          servico: string | null
           status: string
           token: string
           whatsapp: string
@@ -61,6 +62,7 @@ export type Database = {
           criado_em?: string
           id?: string
           nome: string
+          servico?: string | null
           status?: string
           token?: string
           whatsapp: string
@@ -71,6 +73,7 @@ export type Database = {
           criado_em?: string
           id?: string
           nome?: string
+          servico?: string | null
           status?: string
           token?: string
           whatsapp?: string
@@ -90,10 +93,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      entrar_fila: {
-        Args: { _nome: string; _slug: string; _whatsapp: string }
-        Returns: Json
-      }
+      entrar_fila:
+        | {
+            Args: { _nome: string; _slug: string; _whatsapp: string }
+            Returns: Json
+          }
+        | {
+            Args: {
+              _nome: string
+              _servico: string
+              _slug: string
+              _whatsapp: string
+            }
+            Returns: Json
+          }
       fila_agendamento_cliente: {
         Args: { _id: string; _slug: string; _token: string }
         Returns: Json
@@ -122,15 +135,26 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      reservar_fila: {
-        Args: {
-          _inicio: string
-          _nome: string
-          _slug: string
-          _whatsapp: string
-        }
-        Returns: Json
-      }
+      reservar_fila:
+        | {
+            Args: {
+              _inicio: string
+              _nome: string
+              _slug: string
+              _whatsapp: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              _inicio: string
+              _nome: string
+              _servico: string
+              _slug: string
+              _whatsapp: string
+            }
+            Returns: Json
+          }
       sair_fila: { Args: { _id: string; _token: string }; Returns: undefined }
     }
     Enums: {

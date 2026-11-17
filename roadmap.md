@@ -1,5 +1,7 @@
 # Fila online
 
+- [ ] Adicionar seleção de serviço no cadastro comum e na reserva; salvar e mostrar para o barbeiro, verificando os dois fluxos.
+
 - [x] Adicionar atalhos flutuantes branco para fila e azul para detalhes de pagamento; verificar abertura e leitura em computador e celular.
 
 - [x] Corrigir abertura da fila para contas sem barbearia vinculada e verificar login autenticado.
