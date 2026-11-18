@@ -212,7 +212,7 @@ function FilaPublica() {
             <label htmlFor="servico-cliente" className="block text-sm font-medium">Tipo de serviço</label>
             <Select value={servico} onValueChange={setServico} required disabled={busy}>
               <SelectTrigger id="servico-cliente" className="h-12 bg-background text-base"><SelectValue placeholder="Selecione o serviço" /></SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background">
                 {initialServices.map((s) => <SelectItem key={s.name} value={s.name}>{s.name}</SelectItem>)}
               </SelectContent>
             </Select>
