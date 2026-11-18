@@ -8,6 +8,9 @@ import { FilaEspera } from "@/components/FilaEspera";
 import { chaveProgresso, identidadeFila } from "@/lib/fila-identidade";
 import { Checkbox } from "@/components/ui/checkbox";
 import { diaSaoPaulo, horaReserva, reservaDisponivel, type HorarioFila } from "@/lib/fila-horarios";
+import { initialServices } from "@/lib/servicos";
+import { entradaComServico } from "@/lib/fila-servico";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/fila_/$codigo")({
   head: () => ({
@@ -42,6 +45,7 @@ function FilaPublica() {
   const [minha, setMinha] = useState<Minha | null>(null);
   const [nome, setNome] = useState("");
   const [whats, setWhats] = useState("");
+  const [servico, setServico] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [identificada, setIdentificada] = useState(false);
@@ -124,12 +128,14 @@ function FilaPublica() {
 
   async function entrar(e: FormEvent) {
     e.preventDefault();
+    if (!servico) { setErro("Selecione um serviço."); return; }
     if (agendar && !reservaDisponivel(horarios, inicio)) { setErro("Escolha um horário disponível."); return; }
     setBusy(true);
     setErro(null);
+    const entrada = entradaComServico(codigo, nome, whats, servico);
     const { data, error } = agendar
-      ? await supabase.rpc("reservar_fila", { _slug: codigo, _nome: nome, _whatsapp: whats, _inicio: inicio })
-      : await supabase.rpc("entrar_fila", { _slug: codigo, _nome: nome, _whatsapp: whats });
+      ? await supabase.rpc("reservar_fila", { ...entrada, _inicio: inicio })
+      : await supabase.rpc("entrar_fila", entrada);
     if (error) { setErro(error.message); if (agendar) { setInicio(""); await carregarHorarios(); } }
     else {
       const m = identidadeFila(data);
@@ -202,6 +208,15 @@ function FilaPublica() {
         <form onSubmit={entrar} className="mt-5 space-y-3">
           <input required maxLength={60} placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-3 text-base" />
           <input required inputMode="tel" placeholder="WhatsApp com DDD" value={whats} onChange={(e) => setWhats(e.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-3 text-base" />
+          <div className="space-y-2">
+            <label htmlFor="servico-cliente" className="block text-sm font-medium">Tipo de serviço</label>
+            <Select value={servico} onValueChange={setServico} required disabled={busy}>
+              <SelectTrigger id="servico-cliente" className="h-12 bg-background text-base"><SelectValue placeholder="Selecione o serviço" /></SelectTrigger>
+              <SelectContent>
+                {initialServices.map((s) => <SelectItem key={s.name} value={s.name}>{s.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center gap-3 py-2">
             <Checkbox id="reservar" checked={agendar} onCheckedChange={(checked) => { setAgendar(checked === true); setErro(null); }} disabled={busy} />
             <label htmlFor="reservar" className="cursor-pointer text-sm font-medium">Quero reservar um horário específico</label>
@@ -218,7 +233,7 @@ function FilaPublica() {
               )}
             </div>
           )}
-          <Button type="submit" disabled={busy || (agendar && !reservaDisponivel(horarios, inicio))} className="h-12 w-full text-base font-semibold">{busy ? (agendar ? "Reservando…" : "Entrando…") : agendar ? "Reservar horário" : "Entrar na fila"}</Button>
+          <Button type="submit" disabled={busy || !servico || (agendar && !reservaDisponivel(horarios, inicio))} className="h-12 w-full text-base font-semibold">{busy ? (agendar ? "Reservando…" : "Entrando…") : agendar ? "Reservar horário" : "Entrar na fila"}</Button>
         </form>
       ) : (
         <p className="mt-5 rounded-lg bg-muted p-4 text-center text-sm">A fila está fechada no momento.</p>

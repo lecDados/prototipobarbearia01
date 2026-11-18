@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/fila")({
 });
 
 type Barbearia = { id: string; slug: string; fila_aberta: boolean; minutos_por_cliente: number };
-type Cliente = { id: string; nome: string; whatsapp: string; status: string; criado_em: string; agendado_em: string | null };
+type Cliente = { id: string; nome: string; whatsapp: string; status: string; criado_em: string; agendado_em: string | null; servico: string | null };
 
 function FilaPainel() {
   const consultar = useServerFn(painelFila);
@@ -147,6 +147,7 @@ function FilaPainel() {
                           <p className="text-xs text-muted-foreground">
                             {c.whatsapp} · chegou {new Date(c.criado_em).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                           </p>
+                          <p className="mt-1 text-sm font-medium">Serviço: {c.servico || "Não informado"}</p>
                         </div>
                         {c.status === "aguardando" && (
                           <Button disabled={busy} variant="outline" onClick={() => status(c.id, "atendendo")} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium">
@@ -170,6 +171,7 @@ function FilaPainel() {
                     <li key={c.id} className="flex flex-wrap items-center gap-3 py-4">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold">{c.nome}</p>
+                        <p className="mt-1 text-sm font-medium">Serviço: {c.servico || "Não informado"}</p>
                         <p className="text-sm text-muted-foreground">{c.agendado_em && new Date(c.agendado_em).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · {c.whatsapp}</p>
                         {c.status === "atendendo" && <p className="text-xs text-success">Em atendimento</p>}
                       </div>

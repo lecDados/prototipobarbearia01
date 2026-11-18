@@ -40,7 +40,7 @@ export const painelFila = createServerFn({ method: "POST" })
       if (error || !atual) throw new Error("Não foi possível atualizar a fila.");
       Object.assign(barb, atual);
     }
-    const { data: clientes, error } = await supabase.from("fila").select("id,nome,whatsapp,status,criado_em,agendado_em").eq("barbearia_id", barb.id).in("status", ["aguardando", "atendendo"]).order("criado_em");
+    const { data: clientes, error } = await supabase.from("fila").select("id,nome,whatsapp,status,criado_em,agendado_em,servico").eq("barbearia_id", barb.id).in("status", ["aguardando", "atendendo"]).order("criado_em");
     if (error) throw new Error("Não foi possível carregar os clientes.");
     return { autorizado: true as const, barb, clientes: clientes ?? [] };
   });

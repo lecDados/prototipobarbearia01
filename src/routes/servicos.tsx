@@ -2,30 +2,14 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Clock3, Plus, Trash2, X } from "lucide-react";
 import { AppShell, PageHeader, PrimaryButton, pageHead } from "@/components/AppShell";
+import { initialServices, type Service } from "@/lib/servicos";
 
 export const Route = createFileRoute("/servicos")({
   head: () => pageHead("Catálogo de serviços", "Serviços oferecidos pela barbearia com preços e duração."),
   component: Servicos,
 });
 
-type Service = {
-  name: string;
-  price: string;
-  time: string;
-  cat: string;
-  tone: string;
-};
-
 const tones = ["bg-primary", "bg-chart-3", "bg-chart-1", "bg-success", "bg-chart-2", "bg-accent"];
-
-const initialServices: Service[] = [
-  { name: "Corte clássico", price: "R$ 45", time: "30 min", cat: "Cabelo", tone: "bg-primary" },
-  { name: "Degradê", price: "R$ 55", time: "40 min", cat: "Cabelo", tone: "bg-chart-3" },
-  { name: "Barba premium", price: "R$ 40", time: "30 min", cat: "Barba", tone: "bg-chart-1" },
-  { name: "Corte + Barba", price: "R$ 80", time: "60 min", cat: "Combo", tone: "bg-success" },
-  { name: "Corte executivo", price: "R$ 65", time: "45 min", cat: "Cabelo", tone: "bg-chart-2" },
-  { name: "Sobrancelha", price: "R$ 20", time: "15 min", cat: "Acabamento", tone: "bg-accent" },
-];
 
 const emptyForm = { name: "", price: "", time: "", cat: "" };
 
@@ -52,7 +36,7 @@ function Servicos() {
         price: Number.isFinite(priceNum) && priceNum > 0 ? `R$ ${priceNum.toFixed(0)}` : form.price.trim(),
         time: form.time.trim() || "30 min",
         cat: form.cat.trim() || "Cabelo",
-        tone: tones[s.length % tones.length]!,
+        tone: tones[s.length % tones.length] ?? "bg-primary",
       },
     ]);
     setForm(emptyForm);
