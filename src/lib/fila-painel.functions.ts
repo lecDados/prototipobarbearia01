@@ -3,6 +3,19 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { donoDaFila, novaBarbearia } from "./fila-permissao";
 
+export const dadosDashboard = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { setResponseHeader } = await import("@tanstack/react-start/server");
+    setResponseHeader("Cache-Control", "no-store");
+    const { data: barb, error: erroBarb } = await context.supabase.from("barbearias").select("id,slug").eq("owner_id", context.userId).maybeSingle();
+    if (erroBarb) throw new Error("Não foi possível carregar a agenda.");
+    if (!barb) return { slug: null, clientes: [] };
+    const { data, error } = await context.supabase.from("fila").select("id,nome,servico,status,criado_em,agendado_em").eq("barbearia_id", barb.id).order("criado_em");
+    if (error) throw new Error("Não foi possível carregar a agenda.");
+    return { slug: barb.slug, clientes: data ?? [] };
+  });
+
 export const painelFila = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(z.object({
