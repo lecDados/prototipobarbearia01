@@ -87,6 +87,9 @@
   --color-earnings-card: var(--earnings-card);
   --color-income-card: var(--income-card);
   --color-expenses-card: var(--expenses-card);
+  --color-agenda-line-start: var(--agenda-line-start);
+  --color-agenda-line-mid: var(--agenda-line-mid);
+  --color-agenda-line-end: var(--agenda-line-end);
   --font-sans: var(--font-interface);
   --shadow-soft: var(--shadow-soft);
   --shadow-glow: var(--shadow-glow);
@@ -98,6 +101,9 @@
   --earnings-card: oklch(0.91 0.075 153);
   --income-card: oklch(0.9 0.065 225);
   --expenses-card: oklch(0.9 0.065 340);
+  --agenda-line-start: oklch(0.72 0.16 155);
+  --agenda-line-mid: oklch(0.82 0.14 92);
+  --agenda-line-end: oklch(0.6 0.2 22);
   --radius: 0.5rem;
   --font-interface:
     -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -166,6 +172,9 @@
   --earnings-card: oklch(0.3 0.065 153);
   --income-card: oklch(0.3 0.06 225);
   --expenses-card: oklch(0.3 0.06 340);
+  --agenda-line-start: oklch(0.66 0.15 155);
+  --agenda-line-mid: oklch(0.76 0.14 92);
+  --agenda-line-end: oklch(0.56 0.19 22);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
@@ -264,6 +273,15 @@
 
   .bg-gradient-warm {
     background-image: linear-gradient(135deg, var(--highlight), var(--chart-1));
+  }
+
+  .bg-gradient-agenda {
+    background-image: linear-gradient(
+      to bottom,
+      var(--agenda-line-start),
+      var(--agenda-line-mid) 50%,
+      var(--agenda-line-end)
+    );
   }
 
   .bg-gradient-instagram {

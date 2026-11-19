@@ -65,17 +65,21 @@ function Dashboard() {
         </section>
         <Lancamentos financeiro={financeiro} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[1.55fr_1fr]">
-          <Panel eyebrow="Agenda" title="Próximos clientes">
-            <div className="divide-y divide-border">
-              {dados.agenda.length === 0 && <p className="py-6 text-sm text-muted-foreground">Nenhum horário reservado na fila online.</p>}
-              {dados.agenda.map((a) => (
-                <div key={a.id} className="flex items-start gap-4 py-4">
-                  <div className="w-16 shrink-0"><p className="text-sm font-semibold">{a.agendado_em ? horaReserva(a.agendado_em) : "—"}</p><p className="mt-1 text-xs text-muted-foreground">{a.agendado_em && new Date(a.agendado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit" })}</p></div>
-                  <div className="min-w-0 flex-1"><p className="break-words text-sm font-semibold">{a.nome}</p><p className="mt-1 break-words text-sm text-muted-foreground">{a.servico || "Serviço não informado"}</p><p className="mt-1 text-xs text-muted-foreground">{a.status === "atendendo" ? "Em atendimento" : "Reservado"}</p></div>
-                </div>
-              ))}
+          <Panel eyebrow="Agenda" title="Próximos clientes" variant="dark">
+            <div className="relative pl-6">
+              <span aria-hidden className="bg-gradient-agenda absolute inset-y-3 left-0 w-[3px] rounded-full" />
+              <span aria-hidden className="bg-gradient-agenda absolute inset-y-3 left-[-2px] w-[7px] rounded-full opacity-25 blur-[3px]" />
+              <div className="divide-y divide-surface-dark-border">
+                {dados.agenda.length === 0 && <p className="py-6 text-sm text-surface-dark-muted">Nenhum horário reservado na fila online.</p>}
+                {dados.agenda.map((a) => (
+                  <div key={a.id} className="flex items-start gap-4 py-4">
+                    <div className="w-16 shrink-0"><p className="text-sm font-semibold">{a.agendado_em ? horaReserva(a.agendado_em) : "—"}</p><p className="mt-1 text-xs text-surface-dark-muted">{a.agendado_em && new Date(a.agendado_em).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit" })}</p></div>
+                    <div className="min-w-0 flex-1"><p className="break-words text-sm font-semibold">{a.nome}</p><p className="mt-1 break-words text-sm text-surface-dark-muted">{a.servico || "Serviço não informado"}</p><p className="mt-1 text-xs text-surface-dark-muted">{a.status === "atendendo" ? "Em atendimento" : "Reservado"}</p></div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <Button asChild variant="outline" className="mt-4"><Link to="/fila">Abrir fila online</Link></Button>
+            <Button asChild variant="outline" className="mt-4 border-surface-dark-border bg-transparent text-surface-dark-foreground hover:bg-surface-dark-hover hover:text-surface-dark-foreground"><Link to="/fila">Abrir fila online</Link></Button>
           </Panel>
           <aside className="bg-gradient-brand flex min-h-72 flex-col justify-between rounded-lg p-6 text-primary-foreground shadow-glow">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-glass/25"><WalletCards size={21} /></div>

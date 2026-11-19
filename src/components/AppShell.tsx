@@ -667,18 +667,31 @@ export function Panel({
   eyebrow,
   children,
   className = "",
+  variant = "default",
 }: {
   title: string;
   eyebrow?: string;
   children: ReactNode;
   className?: string;
+  variant?: "default" | "dark";
 }) {
+  const dark = variant === "dark";
   return (
     <div
-      className={`glass-panel animate-float-in rounded-lg border border-border p-5 shadow-soft sm:p-6 ${className}`}
+      className={`animate-float-in rounded-lg border p-5 shadow-soft sm:p-6 ${
+        dark
+          ? "bg-surface-dark border-surface-dark-border text-surface-dark-foreground"
+          : "glass-panel border-border"
+      } ${className}`}
     >
       {eyebrow && (
-        <p className="text-xs font-semibold uppercase text-muted-foreground">{eyebrow}</p>
+        <p
+          className={`text-xs font-semibold uppercase ${
+            dark ? "text-surface-dark-muted" : "text-muted-foreground"
+          }`}
+        >
+          {eyebrow}
+        </p>
       )}
       <h2 className="mt-1 text-xl font-semibold">{title}</h2>
       <div className="mt-5">{children}</div>
