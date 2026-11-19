@@ -18,7 +18,10 @@ export function desempenhoReal(clientes: RegistroFila[], lancamentos: Lancamento
   const dias = Array.from({ length: 31 }, () => 0);
   for (const l of lancamentos) {
     const dia = diaSaoPaulo(new Date(l.criadoEm));
-    if (dia.startsWith(mes)) dias[Number(dia.slice(8)) - 1] += l.tipo === "entrada" ? l.valor : -l.valor;
+    if (dia.startsWith(mes)) {
+      const indice = Number(dia.slice(8)) - 1;
+      dias[indice] = (dias[indice] ?? 0) + (l.tipo === "entrada" ? l.valor : -l.valor);
+    }
   }
   const contagem = new Map<string, number>();
   for (const c of clientes) if (c.status === "concluido" && c.servico) contagem.set(c.servico, (contagem.get(c.servico) ?? 0) + 1);

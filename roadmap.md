@@ -14,8 +14,8 @@
 
 # Dashboard e Carteira
 
-- [ ] Conectar agenda, totais de atendimento e próximo horário à fila da conta, com atualização em tempo real.
-- [ ] Substituir números demonstrativos da dashboard por registros reais ou estados sem dados e verificar reservas, conclusão e cancelamento.
+- [x] Conectar agenda, totais de atendimento e próximo horário à fila da conta, com atualização em tempo real.
+- [x] Substituir números demonstrativos da dashboard por registros reais ou estados sem dados e verificar reservas, conclusão e cancelamento.
 
 - [x] Unir as telas e preservar o endereço antigo da Carteira.
 - [x] Registrar serviços e despesas com totais imediatos e histórico salvo no dispositivo.

@@ -161,6 +161,8 @@
 }
 
 .dark {
+  --glass: oklch(0.208 0.042 265.755 / 94%);
+  --glass-strong: oklch(0.208 0.042 265.755 / 98%);
   --earnings-card: oklch(0.3 0.065 153);
   --income-card: oklch(0.3 0.06 225);
   --expenses-card: oklch(0.3 0.06 340);
@@ -233,6 +235,10 @@
       oklch(0.97 0.028 216)
     );
     background-attachment: fixed;
+  }
+
+  html.dark body {
+    background-image: none;
   }
 
   button,

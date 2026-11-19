@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   Bell,
@@ -22,6 +22,8 @@ import { IndicadoresCarousel } from "@/components/IndicadoresCarousel";
 import { FloatingShortcuts } from "@/components/FloatingShortcuts";
 import { useFinanceiro } from "@/hooks/use-financeiro";
 import { formatBRL } from "@/lib/financeiro";
+import { useDashboard } from "@/hooks/use-dashboard";
+import { horaReserva } from "@/lib/fila-horarios";
 
 import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import {
@@ -328,7 +330,7 @@ const normalize = (text: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-function getBotReply(input: string, financeiro: ReturnType<typeof useFinanceiro>): ChatMessage {
+function getBotReply(input: string, financeiro: ReturnType<typeof useFinanceiro>, agenda?: ReturnType<typeof useDashboard>): ChatMessage {
   const text = normalize(input);
   const asksForAction =
     /\b(cadastr|cri|adicion|inclu|inser|registr|apag|exclu|remov|alter|edit|atualiz|marc|agend|lanc)\w*/.test(
@@ -365,7 +367,7 @@ function getBotReply(input: string, financeiro: ReturnType<typeof useFinanceiro>
   ) {
     return {
       from: "bot",
-      text: "Há **18 agendamentos hoje**, com **11 clientes atendidos** e **7 aguardando**. O próximo horário é às **09:30**, com Rafael Mendes para Corte + Barba.",
+      text: agenda ? `Há **${agenda.agendamentosHoje} agendamentos hoje**, **${agenda.atendidos} clientes atendidos** e **${agenda.aguardando} aguardando**.${agenda.proximo?.agendado_em ? ` Próximo horário: **${horaReserva(agenda.proximo.agendado_em)}**, ${agenda.proximo.nome}, ${agenda.proximo.servico || "serviço não informado"}.` : " Não há reserva futura."}` : "Consulte a dashboard para ver a agenda atual da fila online.",
     };
   }
   if (
@@ -373,7 +375,7 @@ function getBotReply(input: string, financeiro: ReturnType<typeof useFinanceiro>
   ) {
     return {
       from: "bot",
-      text: `**Financeiro:** ganhos de hoje de ${formatBRL(financeiro.ganhosHoje)} e saldo de ${formatBRL(financeiro.saldo)}. A agenda demonstrativa mostra 18 agendamentos e 11 clientes atendidos.`,
+      text: `**Financeiro:** ganhos de hoje de ${formatBRL(financeiro.ganhosHoje)} e saldo de ${formatBRL(financeiro.saldo)}.${agenda ? ` A agenda tem ${agenda.agendamentosHoje} reservas hoje e ${agenda.aguardando} clientes aguardando.` : " Consulte a dashboard para a agenda atual."}`,
     };
   }
   return {
@@ -382,7 +384,15 @@ function getBotReply(input: string, financeiro: ReturnType<typeof useFinanceiro>
   };
 }
 
+function DashboardChat() {
+  const agenda = useDashboard();
+  return <ChatWidgetContent agenda={agenda} />;
+}
 function ChatWidget() {
+  const dashboard = useRouterState({ select: (s) => s.location.pathname === "/dashboard" });
+  return dashboard ? <DashboardChat /> : <ChatWidgetContent />;
+}
+function ChatWidgetContent({ agenda }: { agenda?: ReturnType<typeof useDashboard> }) {
   const financeiro = useFinanceiro();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -395,7 +405,7 @@ function ChatWidget() {
   const send = ({ text: value }: { text: string }) => {
     const text = value.trim();
     if (!text) return;
-    setMessages((prev) => [...prev, { from: "user", text }, getBotReply(text, financeiro)]);
+    setMessages((prev) => [...prev, { from: "user", text }, getBotReply(text, financeiro, agenda)]);
   };
 
   return (
@@ -506,12 +516,9 @@ export function PageHeader({
             </div>
             <div
               className="mt-1.5 flex flex-wrap items-center gap-1"
-              aria-label="Avaliação 4,9 de 5, 328 avaliações"
+              aria-label="Google Meu Negócio"
             >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <Star key={n} size={11} className="fill-star text-star" aria-hidden="true" />
-              ))}
-              <span className="text-xs text-muted-foreground">4,9 · 328 avaliações</span>
+              <span className="text-xs text-muted-foreground">Perfil da barbearia</span>
             </div>
           </a>
 

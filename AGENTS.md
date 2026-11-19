@@ -25,6 +25,7 @@
 - Dashboard indicator slides share the account and inventory records with their pages and use the financial ledger for wallet values, preventing divergent summaries.
 
 <!-- AGENT-MEMORY:BEGIN -->
+- Dashboard agenda and attendance summaries use an authenticated owner-scoped queue query shared with highlight slides; reserved appointments never imply payment, and unrecorded analytics show an empty state rather than demo totals.
 - Queue submissions persist the selected service on each entry via validated public RPCs; only the owner panel reads it, and the public selector reuses the default service catalog to avoid divergent options.
 - Floating payment details read the existing ledger and label static bill examples separately, so examples never appear as actual customer payment records.
 - Store optional appointments in the queue with a separate scheduled timestamp and atomic unique active-slot index; expose availability without customer details and restore reservations only with the private entry token.

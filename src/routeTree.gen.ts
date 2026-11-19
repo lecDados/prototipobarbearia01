@@ -14,10 +14,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarteiraRouteImport } from './routes/carteira'
 import { Route as ContasRouteImport } from './routes/contas'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as EstoqueRouteImport } from './routes/estoque'
 import { Route as FuncionariosRouteImport } from './routes/funcionarios'
 import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedFilaRouteImport } from './routes/_authenticated/fila'
 import { Route as FilaCodigoRouteImport } from './routes/fila_.$codigo'
 
@@ -45,11 +45,6 @@ const ContasRoute = ContasRouteImport.update({
   path: '/contas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EstoqueRoute = EstoqueRouteImport.update({
   id: '/estoque',
   path: '/estoque',
@@ -64,6 +59,11 @@ const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
   path: '/servicos',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFilaRoute = AuthenticatedFilaRouteImport.update({
   id: '/fila',
@@ -81,10 +81,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carteira': typeof CarteiraRoute
   '/contas': typeof ContasRoute
-  '/dashboard': typeof DashboardRoute
   '/estoque': typeof EstoqueRoute
   '/funcionarios': typeof FuncionariosRoute
   '/servicos': typeof ServicosRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/fila': typeof AuthenticatedFilaRoute
   '/fila/$codigo': typeof FilaCodigoRoute
 }
@@ -93,10 +93,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carteira': typeof CarteiraRoute
   '/contas': typeof ContasRoute
-  '/dashboard': typeof DashboardRoute
   '/estoque': typeof EstoqueRoute
   '/funcionarios': typeof FuncionariosRoute
   '/servicos': typeof ServicosRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/fila': typeof AuthenticatedFilaRoute
   '/fila/$codigo': typeof FilaCodigoRoute
 }
@@ -107,10 +107,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carteira': typeof CarteiraRoute
   '/contas': typeof ContasRoute
-  '/dashboard': typeof DashboardRoute
   '/estoque': typeof EstoqueRoute
   '/funcionarios': typeof FuncionariosRoute
   '/servicos': typeof ServicosRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fila': typeof AuthenticatedFilaRoute
   '/fila_/$codigo': typeof FilaCodigoRoute
 }
@@ -121,10 +121,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carteira'
     | '/contas'
-    | '/dashboard'
     | '/estoque'
     | '/funcionarios'
     | '/servicos'
+    | '/dashboard'
     | '/fila'
     | '/fila/$codigo'
   fileRoutesByTo: FileRoutesByTo
@@ -133,10 +133,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carteira'
     | '/contas'
-    | '/dashboard'
     | '/estoque'
     | '/funcionarios'
     | '/servicos'
+    | '/dashboard'
     | '/fila'
     | '/fila/$codigo'
   id:
@@ -146,10 +146,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/carteira'
     | '/contas'
-    | '/dashboard'
     | '/estoque'
     | '/funcionarios'
     | '/servicos'
+    | '/_authenticated/dashboard'
     | '/_authenticated/fila'
     | '/fila_/$codigo'
   fileRoutesById: FileRoutesById
@@ -160,7 +160,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarteiraRoute: typeof CarteiraRoute
   ContasRoute: typeof ContasRoute
-  DashboardRoute: typeof DashboardRoute
   EstoqueRoute: typeof EstoqueRoute
   FuncionariosRoute: typeof FuncionariosRoute
   ServicosRoute: typeof ServicosRoute
@@ -204,13 +203,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/estoque': {
       id: '/estoque'
       path: '/estoque'
@@ -232,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/fila': {
       id: '/_authenticated/fila'
       path: '/fila'
@@ -250,10 +249,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFilaRoute: typeof AuthenticatedFilaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFilaRoute: AuthenticatedFilaRoute,
 }
 
@@ -266,7 +267,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarteiraRoute: CarteiraRoute,
   ContasRoute: ContasRoute,
-  DashboardRoute: DashboardRoute,
   EstoqueRoute: EstoqueRoute,
   FuncionariosRoute: FuncionariosRoute,
   ServicosRoute: ServicosRoute,

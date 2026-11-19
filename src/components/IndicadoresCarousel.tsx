@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { Boxes, CircleDollarSign, PackageSearch, WalletCards } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
-import { resumoIndicadores } from "@/lib/indicadores";
+import { useDashboard } from "@/hooks/use-dashboard";
 import { formatBRL } from "@/lib/financeiro";
 import { useFinanceiro } from "@/hooks/use-financeiro";
 
 export function IndicadoresCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [paused, setPaused] = useState(false);
-  const { saldo } = useFinanceiro();
-  const resumo = resumoIndicadores();
+  const { saldo, entradas, saidas } = useFinanceiro();
+  const resumo = useDashboard();
   const indicadores = [
-    { label: "Contas a pagar", value: formatBRL(resumo.valorContas), detail: `${resumo.contasAbertas} contas em aberto`, Icon: CircleDollarSign, tone: "border-pro-border/40 bg-pro/15", accent: "text-highlight" },
-    { label: "Estoque baixo", value: String(resumo.estoqueBaixo).padStart(2, "0"), detail: "Produtos para repor", Icon: PackageSearch, tone: "border-chart-1/30 bg-chart-1/10", accent: "text-chart-1" },
-    { label: "Produtos cadastrados", value: String(resumo.produtos).padStart(2, "0"), detail: "Itens no catálogo de estoque", Icon: Boxes, tone: "border-success/30 bg-success/10", accent: "text-success" },
+    { label: "Entradas registradas", value: formatBRL(entradas), detail: "Lançamentos da carteira", Icon: CircleDollarSign, tone: "border-pro-border/40 bg-pro/15", accent: "text-highlight" },
+    { label: "Saídas registradas", value: formatBRL(saidas), detail: "Despesas da carteira", Icon: PackageSearch, tone: "border-chart-1/30 bg-chart-1/10", accent: "text-chart-1" },
+    { label: "Agendamentos", value: String(resumo.agenda.length), detail: `${resumo.agendamentosHoje} horários hoje`, Icon: Boxes, tone: "border-success/30 bg-success/10", accent: "text-success" },
     { label: "Saldo da carteira", value: formatBRL(saldo), detail: "Lançamentos registrados", Icon: WalletCards, tone: "border-queue-action/40 bg-queue-action/15", accent: "text-surface-dark-foreground" },
   ];
 
