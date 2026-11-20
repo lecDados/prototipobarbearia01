@@ -69,6 +69,8 @@
   --color-star: var(--star);
   --color-glass: var(--glass);
   --color-glass-strong: var(--glass-strong);
+  --color-tint-a: var(--tint-a);
+  --color-tint-b: var(--tint-b);
   --color-surface-dark: var(--surface-dark);
   --color-surface-dark-foreground: var(--surface-dark-foreground);
   --color-surface-dark-muted: var(--surface-dark-muted);
@@ -141,6 +143,8 @@
   --star: oklch(0.79 0.16 86);
   --glass: oklch(0.99 0.005 300 / 64%);
   --glass-strong: oklch(0.995 0.003 300 / 86%);
+  --tint-a: oklch(0.94 0.055 300 / 62%);
+  --tint-b: oklch(0.95 0.05 220 / 62%);
   --stat-blue: oklch(0.26 0.06 253);
   --stat-blue-strong: oklch(0.35 0.085 264);
   --stat-blue-border: oklch(0.99 0.005 300 / 18%);
@@ -169,6 +173,8 @@
 .dark {
   --glass: oklch(0.208 0.042 265.755 / 94%);
   --glass-strong: oklch(0.208 0.042 265.755 / 98%);
+  --tint-a: oklch(0.31 0.075 288 / 86%);
+  --tint-b: oklch(0.27 0.065 248 / 86%);
   --earnings-card: oklch(0.3 0.065 153);
   --income-card: oklch(0.3 0.06 225);
   --expenses-card: oklch(0.3 0.06 340);
@@ -306,6 +312,11 @@
   .glass-strong {
     background: var(--glass-strong);
     backdrop-filter: blur(30px) saturate(160%);
+  }
+
+  .glass-tint-panel {
+    background-image: linear-gradient(135deg, var(--tint-a), var(--tint-b));
+    backdrop-filter: blur(18px) saturate(150%);
   }
 
   .liquid-button {

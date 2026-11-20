@@ -28,7 +28,7 @@ export function Lancamentos({ financeiro }: { financeiro: ReturnType<typeof useF
   }
   const inputClass = "mt-1 w-full rounded-lg border border-border bg-background/60 px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30";
   return (
-    <section className="mt-8" aria-label="Carteira e lançamentos">
+    <section className="glass-tint-panel mt-8 rounded-lg border border-border p-5 shadow-soft sm:p-6" aria-label="Carteira e lançamentos">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div><p className="text-xs font-semibold uppercase text-muted-foreground">Carteira</p><h2 className="mt-1 text-xl font-semibold">Lançamentos</h2></div>
         <Button disabled={!financeiro.pronto} onClick={() => { setAberto(true); setTipo("entrada"); setErro(""); }} className="bg-gradient-brand h-10 rounded-full text-primary-foreground shadow-glow"><Plus />Lançar serviço</Button>
