@@ -21,7 +21,7 @@
 - The barber queue lives under the authenticated layout and uses bearer-authenticated server functions with owner-scoped RLS, so the persisted account session replaces PINs without making management public.
 - Keep the customer queue route non-nested (`fila_.$codigo`) relative to the barber panel, so public customer pages never inherit the management shell or its home navigation.
 - Dashboard owns the combined wallet view; keep /carteira as a redirect so existing links remain valid.
-- Financial totals and chat financial replies derive from the same browser-persisted ledger, with same-window events and cross-tab storage listeners; demo financial figures must not be mixed with recorded transactions.
+- Financial totals and chat financial replies share the owner-scoped completed-queue ledger; browser-local manual records never enter wallet totals. Completion atomically snapshots the catalog price and timestamp once, and soft-deleting a wallet entry preserves attendance history without recreating income.
 - Dashboard indicator slides share the account and inventory records with their pages and use the financial ledger for wallet values, preventing divergent summaries.
 
 <!-- AGENT-MEMORY:BEGIN -->

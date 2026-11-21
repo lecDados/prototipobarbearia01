@@ -14,3 +14,10 @@ export const initialServices: Service[] = [
   { name: "Corte executivo", price: "R$ 65", time: "45 min", cat: "Cabelo", tone: "bg-chart-2" },
   { name: "Sobrancelha", price: "R$ 20", time: "15 min", cat: "Acabamento", tone: "bg-accent" },
 ];
+
+export function precoServico(nome: string | null): number | null {
+  const servico = initialServices.find((s) => s.name === nome);
+  if (!servico) return null;
+  const valor = Number(servico.price.replace(/[^\d,.-]/g, "").replace(",", "."));
+  return Number.isFinite(valor) && valor > 0 ? valor : null;
+}

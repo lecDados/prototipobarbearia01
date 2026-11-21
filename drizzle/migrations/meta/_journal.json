@@ -22,6 +22,13 @@
       "when": 1794906779346,
       "tag": "0002_queue_selected_service",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795222342477,
+      "tag": "0003_queue_completion_wallet",
+      "breakpoints": true
     }
   ]
 }

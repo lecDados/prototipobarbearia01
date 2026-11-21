@@ -1,42 +1,41 @@
-import { useCallback, useEffect, useState } from "react";
-import { lerLancamentos, resumoFinanceiro, type Lancamento } from "@/lib/financeiro";
-
-const chave = "black-studio:financeiro:v1";
-const evento = "black-studio:financeiro";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
+import { resumoFinanceiro } from "@/lib/financeiro";
+import { excluirLancamento, lerCarteira } from "@/lib/financeiro.functions";
 
 export function useFinanceiro() {
-  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
-  const [pronto, setPronto] = useState(false);
-  const [erro, setErro] = useState("");
-  useEffect(() => {
-    const atualizar = () => {
-      try { setLancamentos(lerLancamentos(localStorage.getItem(chave))); }
-      catch { setErro("Não foi possível acessar os lançamentos salvos neste dispositivo."); }
-      setPronto(true);
-    };
-    const storage = (e: StorageEvent) => { if (e.key === chave || e.key === null) atualizar(); };
-    atualizar();
-    window.addEventListener(evento, atualizar);
-    window.addEventListener("storage", storage);
-    return () => {
-      window.removeEventListener(evento, atualizar);
-      window.removeEventListener("storage", storage);
-    };
-  }, []);
-
-  const adicionar = useCallback((item: Omit<Lancamento, "id" | "criadoEm">) => {
-    if (!item.descricao.trim() || !Number.isFinite(item.valor) || item.valor <= 0) return false;
+  const [hidratado, setHidratado] = useState(false);
+  const [erroExclusao, setErroExclusao] = useState("");
+  const [excluindo, setExcluindo] = useState<string | null>(null);
+  const client = useQueryClient();
+  const ler = useServerFn(lerCarteira);
+  const excluir = useServerFn(excluirLancamento);
+  useEffect(() => setHidratado(true), []);
+  const conta = useQuery({
+    queryKey: ["financeiro-conta"], enabled: hidratado,
+    queryFn: async () => { const { data } = await supabase.auth.getUser(); return data.user?.id ?? null; },
+  });
+  const carteira = useQuery({
+    queryKey: ["financeiro-fila", conta.data],
+    queryFn: () => ler(), enabled: hidratado && !!conta.data,
+    refetchInterval: 10000, staleTime: 0,
+  });
+  const lancamentos = conta.data ? carteira.data ?? [] : [];
+  async function remover(id: string) {
+    setExcluindo(id);
+    setErroExclusao("");
     try {
-      const anteriores = lerLancamentos(localStorage.getItem(chave));
-      const novos = [{ ...item, id: crypto.randomUUID(), criadoEm: new Date().toISOString() }, ...anteriores];
-      localStorage.setItem(chave, JSON.stringify(novos));
-      setErro("");
-      window.dispatchEvent(new Event(evento));
+      await excluir({ data: { id } });
+      await client.invalidateQueries({ queryKey: ["financeiro-fila"] });
       return true;
     } catch {
-      setErro("Não foi possível salvar o lançamento. Verifique o armazenamento do navegador e tente novamente.");
+      setErroExclusao("Não foi possível excluir o lançamento. Tente novamente.");
       return false;
-    }
-  }, []);
-  return { lancamentos, pronto, erro, adicionar, ...resumoFinanceiro(lancamentos) };
+    } finally { setExcluindo(null); }
+  }
+  const pronto = hidratado && !conta.isPending && (!conta.data || !carteira.isPending);
+  const erro = erroExclusao || (carteira.isError ? "Não foi possível carregar os lançamentos da fila." : "");
+  return { lancamentos, pronto, erro, remover, excluindo, ...resumoFinanceiro(lancamentos) };
 }

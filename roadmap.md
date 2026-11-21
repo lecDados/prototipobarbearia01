@@ -14,6 +14,10 @@
 
 # Dashboard e Carteira
 
+- [ ] Creditar automaticamente atendimentos concluídos usando o preço do catálogo, sem duplicar valores.
+- [ ] Substituir lançamentos manuais por registros da fila e permitir excluir sem apagar o atendimento.
+- [ ] Verificar conclusão, saldo, exclusão, recarga e isolamento por conta.
+
 - [x] Conectar agenda, totais de atendimento e próximo horário à fila da conta, com atualização em tempo real.
 - [x] Substituir números demonstrativos da dashboard por registros reais ou estados sem dados e verificar reservas, conclusão e cancelamento.
 

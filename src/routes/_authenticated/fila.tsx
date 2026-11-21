@@ -50,8 +50,10 @@ function FilaPainel() {
     try {
       const resultado = await consultar({ data: { acao: "status", id, status: s } });
       if (!resultado.autorizado) { setBarb(null); setClientes([]); return; }
+      await queryClient.invalidateQueries({ queryKey: ["financeiro-fila"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard-fila"] });
       await carregar();
-    } catch { setErro("Não foi possível atualizar o atendimento."); }
+    } catch (error) { setErro(error instanceof Error ? error.message : "Não foi possível atualizar o atendimento."); }
     finally { setBusy(false); }
   }
 

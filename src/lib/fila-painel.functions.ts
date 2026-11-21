@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { donoDaFila, novaBarbearia } from "./fila-permissao";
+import { precoServico } from "./servicos";
 
 export const dadosDashboard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -44,8 +45,17 @@ export const painelFila = createServerFn({ method: "POST" })
     if (bError || !barb || !donoDaFila(userId, barb.owner_id)) throw new Error("Esta conta não tem acesso à fila da barbearia.");
     if (data.acao === "status") {
       if (!data.id || !data.status) throw new Error("Atendimento inválido.");
-      const { error } = await supabase.from("fila").update({ status: data.status }).eq("id", data.id).eq("barbearia_id", barb.id).in("status", ["aguardando", "atendendo"]);
-      if (error) throw new Error("Não foi possível atualizar o atendimento.");
+      if (data.status === "concluido") {
+        const { data: cliente, error: erroCliente } = await supabase.from("fila").select("servico").eq("id", data.id).eq("barbearia_id", barb.id).single();
+        if (erroCliente || !cliente) throw new Error("Atendimento não encontrado.");
+        const valor = precoServico(cliente.servico);
+        if (valor === null) throw new Error("O serviço deste atendimento não tem preço no catálogo.");
+        const { error } = await supabase.rpc("concluir_atendimento", { _id: data.id, _valor: valor });
+        if (error) throw new Error("Não foi possível concluir e registrar o atendimento na carteira.");
+      } else {
+        const { error } = await supabase.from("fila").update({ status: data.status }).eq("id", data.id).eq("barbearia_id", barb.id).eq("status", "aguardando");
+        if (error) throw new Error("Não foi possível atualizar o atendimento.");
+      }
     }
     if (data.acao === "configurar") {
       const campos = { ...(data.aberta !== undefined ? { fila_aberta: data.aberta } : {}), ...(data.minutos !== undefined ? { minutos_por_cliente: data.minutos } : {}) };

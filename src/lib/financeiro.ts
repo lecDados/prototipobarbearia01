@@ -6,6 +6,23 @@ export type Lancamento = {
   criadoEm: string;
 };
 
+export type AtendimentoFinanceiro = {
+  id: string;
+  nome: string;
+  servico: string | null;
+  status: string;
+  valor_atendimento: number | null;
+  concluido_em: string | null;
+  lancamento_excluido: boolean;
+};
+
+export function lancamentosDaFila(clientes: AtendimentoFinanceiro[]): Lancamento[] {
+  return clientes.flatMap((c) => {
+    if (c.status !== "concluido" || c.lancamento_excluido || !c.concluido_em || c.valor_atendimento === null || !Number.isFinite(c.valor_atendimento) || c.valor_atendimento <= 0) return [];
+    return [{ id: c.id, descricao: `${c.servico || "Atendimento"} — ${c.nome}`, valor: c.valor_atendimento, tipo: "entrada" as const, criadoEm: c.concluido_em }];
+  });
+}
+
 export const formatBRL = (valor: number) =>
   valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 

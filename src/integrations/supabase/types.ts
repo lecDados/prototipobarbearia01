@@ -48,34 +48,43 @@ export type Database = {
         Row: {
           agendado_em: string | null
           barbearia_id: string
+          concluido_em: string | null
           criado_em: string
           id: string
+          lancamento_excluido: boolean
           nome: string
           servico: string | null
           status: string
           token: string
+          valor_atendimento: number | null
           whatsapp: string
         }
         Insert: {
           agendado_em?: string | null
           barbearia_id: string
+          concluido_em?: string | null
           criado_em?: string
           id?: string
+          lancamento_excluido?: boolean
           nome: string
           servico?: string | null
           status?: string
           token?: string
+          valor_atendimento?: number | null
           whatsapp: string
         }
         Update: {
           agendado_em?: string | null
           barbearia_id?: string
+          concluido_em?: string | null
           criado_em?: string
           id?: string
+          lancamento_excluido?: boolean
           nome?: string
           servico?: string | null
           status?: string
           token?: string
+          valor_atendimento?: number | null
           whatsapp?: string
         }
         Relationships: [
@@ -93,6 +102,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      concluir_atendimento: {
+        Args: { _id: string; _valor: number }
+        Returns: boolean
+      }
       entrar_fila:
         | {
             Args: { _nome: string; _slug: string; _whatsapp: string }
