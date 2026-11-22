@@ -349,3 +349,6 @@
     scroll-behavior: auto !important;
   }
 }
+#lovable-badge {
+  display: none !important;
+}
