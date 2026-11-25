@@ -21,15 +21,46 @@ function ProSection({ financeiro, dados }: { financeiro: ReturnType<typeof useFi
   const desempenho = desempenhoReal(dados.clientes, financeiro.lancamentos, dados.agora);
   const maior = Math.max(1, ...desempenho.dias.map(Math.abs));
   const pontos = desempenho.dias.map((v, i) => `${10 + i * 9},${60 - (v / maior) * 48}`).join(" ");
+  const rotulo = "text-xs font-semibold uppercase opacity-75";
+  const bloco = "rounded-lg border border-pro-border/60 bg-pro/50 p-4";
   return (
-    <section className="mt-5 border-t border-border py-6">
-      <h2 className="flex items-center gap-2 text-lg font-semibold"><Crown size={18} className="text-pro-foreground" /> Desempenho</h2>
-      <div className="mt-5 grid gap-6 lg:grid-cols-3">
-        <div><p className="text-xs font-semibold uppercase text-muted-foreground">Saldo do mês</p><p className="mt-2 text-2xl font-semibold">{financeiro.pronto ? formatBRL(desempenho.saldoMes) : "—"}</p>
-          {financeiro.lancamentos.length ? <svg aria-label="Saldo diário do mês" viewBox="0 0 300 120" className="mt-3 h-32 w-full"><polyline points={pontos} fill="none" stroke="var(--color-chart-1)" strokeWidth="3" /></svg> : <p className="mt-3 text-sm text-muted-foreground">Nenhum lançamento registrado.</p>}
+    <section className="mt-5 rounded-lg border border-pro-border bg-pro/70 p-4 text-pro-foreground sm:p-5">
+      <h2 className="flex items-center text-lg font-semibold">
+        <Crown size={19} className="mr-3" aria-hidden="true" />
+        Desempenho
+        <span className="ml-auto rounded-full bg-pro-foreground/15 px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">Pro</span>
+      </h2>
+      <div className="mt-4 grid gap-3 lg:grid-cols-3">
+        <div className={bloco}>
+          <p className={rotulo}>Saldo do mês</p>
+          <p className="mt-2 text-2xl font-semibold">{financeiro.pronto ? formatBRL(desempenho.saldoMes) : "—"}</p>
+          {financeiro.lancamentos.length ? (
+            <svg aria-label="Saldo diário do mês" viewBox="0 0 300 120" className="mt-3 h-32 w-full">
+              <polyline points={pontos} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : (
+            <p className="mt-3 text-sm opacity-75">Nenhum lançamento registrado.</p>
+          )}
         </div>
-        <div><p className="text-xs font-semibold uppercase text-muted-foreground">Serviços concluídos</p><div className="mt-3 divide-y divide-border">{desempenho.servicos.length ? desempenho.servicos.map(([nome, quantidade]) => <div key={nome} className="flex justify-between gap-3 py-2 text-sm"><span>{nome}</span><strong>{quantidade}</strong></div>) : <p className="text-sm text-muted-foreground">Nenhum serviço concluído com tipo informado.</p>}</div></div>
-        <div><p className="text-xs font-semibold uppercase text-muted-foreground">Consumo de estoque</p><p className="mt-3 text-sm text-muted-foreground">Nenhuma movimentação de consumo registrada.</p></div>
+        <div className={bloco}>
+          <p className={rotulo}>Serviços concluídos</p>
+          <div className="mt-3 divide-y divide-pro-border/40">
+            {desempenho.servicos.length ? (
+              desempenho.servicos.map(([nome, quantidade]) => (
+                <div key={nome} className="flex justify-between gap-3 py-2 text-sm">
+                  <span>{nome}</span>
+                  <strong>{quantidade}</strong>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm opacity-75">Nenhum serviço concluído com tipo informado.</p>
+            )}
+          </div>
+        </div>
+        <div className={bloco}>
+          <p className={rotulo}>Consumo de estoque</p>
+          <p className="mt-3 text-sm opacity-75">Nenhuma movimentação de consumo registrada.</p>
+        </div>
       </div>
     </section>
   );
