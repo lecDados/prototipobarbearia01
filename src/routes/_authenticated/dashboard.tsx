@@ -18,9 +18,18 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function ProSection({ financeiro, dados }: { financeiro: ReturnType<typeof useFinanceiro>; dados: ReturnType<typeof useDashboard> }) {
+  // Troque para true quando existir a verificação real do plano Pro.
+  const temPlanoPro = false;
   const desempenho = desempenhoReal(dados.clientes, financeiro.lancamentos, dados.agora);
   const maior = Math.max(1, ...desempenho.dias.map(Math.abs));
-  const pontos = desempenho.dias.map((v, i) => `${10 + i * 9},${60 - (v / maior) * 48}`).join(" ");
+  const pontosReais = desempenho.dias.map((v, i) => `${10 + i * 9},${60 - (v / maior) * 48}`).join(" ");
+  // Sem plano Pro, a área mostra apenas dados de exemplo (os reais nem chegam ao navegador).
+  const pontos = temPlanoPro ? pontosReais : "10,50 50,38 90,44 130,22 170,30 210,12 250,24 290,10";
+  const saldo = temPlanoPro ? (financeiro.pronto ? formatBRL(desempenho.saldoMes) : "—") : "R$ 0.000,00";
+  const temLancamentos = temPlanoPro ? financeiro.lancamentos.length > 0 : true;
+  const servicos: [string, number | string][] = temPlanoPro
+    ? desempenho.servicos
+    : [["Corte", "00"], ["Barba", "00"], ["Combo", "00"]];
   const rotulo = "text-xs font-semibold uppercase opacity-75";
   const bloco = "rounded-lg border border-pro-border/60 bg-pro/50 p-4";
   return (
@@ -30,42 +39,56 @@ function ProSection({ financeiro, dados }: { financeiro: ReturnType<typeof useFi
         Desempenho
         <span className="ml-auto rounded-full bg-pro-foreground/15 px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">Pro</span>
       </h2>
-      <div className="mt-4 grid gap-3 lg:grid-cols-3">
-        <div className={bloco}>
-          <p className={rotulo}>Saldo do mês</p>
-          <p className="mt-2 text-2xl font-semibold">{financeiro.pronto ? formatBRL(desempenho.saldoMes) : "—"}</p>
-          {financeiro.lancamentos.length ? (
-            <svg aria-label="Saldo diário do mês" viewBox="0 0 300 120" className="mt-3 h-32 w-full">
-              <polyline points={pontos} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          ) : (
-            <p className="mt-3 text-sm opacity-75">Nenhum lançamento registrado.</p>
-          )}
-        </div>
-        <div className={bloco}>
-          <p className={rotulo}>Serviços concluídos</p>
-          <div className="mt-3 divide-y divide-pro-border/40">
-            {desempenho.servicos.length ? (
-              desempenho.servicos.map(([nome, quantidade]) => (
-                <div key={nome} className="flex justify-between gap-3 py-2 text-sm">
-                  <span>{nome}</span>
-                  <strong>{quantidade}</strong>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm opacity-75">Nenhum serviço concluído com tipo informado.</p>
-            )}
+      <div className="relative mt-4">
+        <div
+          className={temPlanoPro ? "" : "pointer-events-none select-none blur-[6px]"}
+          aria-hidden={!temPlanoPro}
+        >
+          <div className="grid gap-3 lg:grid-cols-3">
+            <div className={bloco}>
+              <p className={rotulo}>Saldo do mês</p>
+              <p className="mt-2 text-2xl font-semibold">{saldo}</p>
+              {temLancamentos ? (
+                <svg aria-label="Saldo diário do mês" viewBox="0 0 300 120" className="mt-3 h-32 w-full">
+                  <polyline points={pontos} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <p className="mt-3 text-sm opacity-75">Nenhum lançamento registrado.</p>
+              )}
+            </div>
+            <div className={bloco}>
+              <p className={rotulo}>Serviços concluídos</p>
+              <div className="mt-3 divide-y divide-pro-border/40">
+                {servicos.length ? (
+                  servicos.map(([nome, quantidade]) => (
+                    <div key={nome} className="flex justify-between gap-3 py-2 text-sm">
+                      <span>{nome}</span>
+                      <strong>{quantidade}</strong>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm opacity-75">Nenhum serviço concluído com tipo informado.</p>
+                )}
+              </div>
+            </div>
+            <div className={bloco}>
+              <p className={rotulo}>Consumo de estoque</p>
+              <p className="mt-3 text-sm opacity-75">Nenhuma movimentação de consumo registrada.</p>
+            </div>
           </div>
         </div>
-        <div className={bloco}>
-          <p className={rotulo}>Consumo de estoque</p>
-          <p className="mt-3 text-sm opacity-75">Nenhuma movimentação de consumo registrada.</p>
-        </div>
+        {!temPlanoPro && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-pro/40 p-4">
+            <div className="max-w-xs rounded-lg border border-pro-border bg-pro px-5 py-4 text-center shadow-lg">
+              <p className="text-base font-semibold">Assine e mude para o plano Pro</p>
+              <p className="mt-1 text-xs opacity-75">Desbloqueie o desempenho completo da sua barbearia.</p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
 }
-
 function Dashboard() {
   const financeiro = useFinanceiro();
   const dados = useDashboard();
